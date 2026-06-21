@@ -22,7 +22,10 @@ function Navigation() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-lg border-t border-border pb-safe">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-lg border-t border-border"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
+    >
       <div className="max-w-[428px] mx-auto flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
           const isActive = location === item.href;

@@ -1,0 +1,163 @@
+Great first version. Now improve Daily Quest so it feels more like a real mobile app and less like a simple web prototype.
+
+Focus on mobile-first polish, PWA readiness, reward feedback, and real daily usage.
+
+## Main goals
+
+1. Improve the Today screen so it feels more engaging.
+2. Add a strong post-completion state.
+3. Improve the Skip/Reroll experience.
+4. Make the app more PWA/mobile friendly.
+5. Add better visual hierarchy and microinteractions.
+6. Keep the app simple, fast, and reliable.
+
+## Today screen improvements
+
+The Today screen should have two different states:
+
+### State 1 — Active quest
+
+Show:
+
+- Date
+- App title
+- Current streak
+- Level and XP progress
+- Today's quest card
+- Category badge
+- Difficulty badge
+- Estimated time
+- XP reward
+- Main CTA: Complete Quest
+- Secondary CTA: Skip / Reroll
+
+Improve the quest card so it feels more premium:
+
+- More visual depth
+- Better spacing
+- Stronger typography
+- Better category/difficulty badges
+- Clearer XP reward
+- More satisfying CTA area
+
+### State 2 — Quest completed
+
+After the user completes today’s quest, replace the active challenge card with a completed state.
+
+Show:
+
+- A celebration message
+- XP gained
+- Updated streak
+- Updated level progress
+- A “Come back tomorrow” message
+- A small summary of today’s completed quest
+- Optional button: View History
+
+Suggested copy:
+
+“Quest Complete”
+“You earned +25 XP”
+“Streak updated. Come back tomorrow for your next quest.”
+
+Do not allow the same quest to be completed twice.
+
+## Completion feedback
+
+When the user taps “Complete Quest”:
+
+- Add a short success animation or visual feedback.
+- Show a celebratory state.
+- If sound is enabled, play a subtle success sound if implementation is safe.
+- If haptics are supported, trigger a light vibration.
+
+Keep this simple and avoid adding unstable dependencies.
+
+## Skip / Reroll improvements
+
+Improve the skip flow.
+
+When the user taps “Skip / Reroll”:
+
+- Ask for confirmation before skipping.
+- Explain that the skipped quest will be saved in history.
+- Generate a new quest for today after confirmation.
+- Make sure skipped quests are tracked correctly.
+
+Use a small modal or bottom sheet style confirmation.
+
+## PWA/mobile improvements
+
+Improve PWA readiness:
+
+- Verify the manifest exists and is correctly linked.
+- Add app name: Daily Quest.
+- Add short name: Quest.
+- Add theme color.
+- Add mobile viewport metadata.
+- Add Apple mobile web app capable metadata.
+- Add placeholder icons if needed.
+- Make sure the app looks good when opened from a phone home screen.
+
+Add a Settings section called “Install App” with simple instructions:
+
+1. Open this app in your mobile browser.
+2. Tap Share or browser menu.
+3. Choose “Add to Home Screen”.
+
+Do not overcomplicate service workers unless safe.
+
+## Mobile UX polish
+
+Improve the layout for phone screens:
+
+- Bottom navigation should remain sticky.
+- Tap targets should be comfortable.
+- The Today screen should avoid unnecessary scrolling.
+- Cards should fit nicely on small screens.
+- Use safe-area padding for mobile if needed.
+- Make buttons full-width where appropriate.
+- Keep the interface readable on small devices.
+
+## Visual identity
+
+Make the app feel like a lightweight RPG productivity app.
+
+Add small visual touches:
+
+- Streak flame indicator
+- XP chip
+- Level badge
+- Category icons if simple
+- Better progress bar
+- Subtle gradient or glow on the main quest card
+- Better empty states
+
+Keep the dark mode, blue/purple accent direction.
+
+## Reliability checks
+
+Review and fix:
+
+- Daily quest persistence
+- Completing only once per day
+- Reroll/skip history
+- Streak calculation
+- Best streak calculation
+- XP and level progress
+- LocalStorage corruption handling
+- Refresh behavior
+
+Make sure the app does not crash if localStorage is empty, old, or invalid.
+
+## Final output
+
+After implementing, summarize:
+
+1. What changed.
+2. How the completed state works.
+3. How to test PWA/mobile behavior.
+4. Any known limitations.
+5. Suggested next iteration.
+
+Before finishing, run the project and fix any TypeScript/build/runtime errors.
