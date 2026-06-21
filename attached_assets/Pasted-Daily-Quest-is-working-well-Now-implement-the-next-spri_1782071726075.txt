@@ -1,0 +1,139 @@
+Daily Quest is working well. Now implement the next sprint: **Personalized Quest Preferences**.
+
+The goal is to make the daily quest generation more useful and personalized without adding backend, authentication, AI, or complex systems.
+
+Focus on user preferences, smarter challenge generation, and a better Settings/Profile experience.
+
+## Main goals
+
+1. Allow users to choose preferred challenge categories.
+2. Allow users to block categories they do not want.
+3. Allow users to choose preferred difficulty.
+4. Add a “Daily Energy Mode” that influences quest selection.
+5. Update quest generation and reroll logic to respect these preferences.
+6. Keep the app simple, mobile-first, and reliable.
+
+## New feature: Quest Preferences
+
+Add a new section in Settings called “Quest Preferences”.
+
+The user should be able to configure:
+
+### Preferred categories
+
+Categories:
+
+- Productivity
+- Learning
+- Health
+- Creativity
+- Social
+- Career
+- Reflection
+- Fun
+
+Allow selecting multiple preferred categories.
+
+If preferred categories are selected, the app should prioritize quests from those categories.
+
+### Blocked categories
+
+Allow selecting categories the user does not want to receive.
+
+Blocked categories should never be selected unless all categories are blocked. If all categories are blocked, show a validation message and prevent saving or ignore the blocked list safely.
+
+### Preferred difficulty
+
+Options:
+
+- Any
+- Easy
+- Medium
+- Hard
+
+If the user chooses a specific difficulty, the generator should prioritize that difficulty.
+
+If no challenge is available for that difficulty after filters, fallback gracefully to any available difficulty.
+
+### Daily Energy Mode
+
+Add a simple mode selector:
+
+- Low Energy
+- Balanced
+- High Energy
+
+Behavior:
+
+- Low Energy should prioritize Easy quests.
+- Balanced should allow Easy and Medium quests.
+- High Energy should allow Medium and Hard quests.
+
+If the user also selected a preferred difficulty, preferred difficulty should take priority over energy mode.
+
+## Quest generation rules
+
+Update the challenge generator:
+
+1. Exclude blocked categories.
+2. Prioritize preferred categories if selected.
+3. Apply preferred difficulty if selected.
+4. Otherwise apply daily energy mode.
+5. Avoid repeating the exact same quest from the previous day if possible.
+6. On reroll, avoid selecting the same quest again if possible.
+7. If filters are too restrictive, fallback gracefully instead of crashing.
+
+The app should always be able to generate a quest.
+
+## Reroll improvements
+
+When the user rerolls/skips:
+
+- Save the skipped quest to history.
+- Generate a new quest based on current preferences.
+- Avoid returning the exact same quest immediately.
+- Show small copy like:
+  “New quest generated based on your preferences.”
+
+## Settings UX
+
+Improve the Settings screen with clear sections:
+
+1. Quest Preferences
+2. App Experience
+3. Data Management
+4. About
+
+Quest Preferences should use mobile-friendly controls:
+
+- Toggle chips for categories
+- Segmented controls or buttons for difficulty
+- Segmented controls or buttons for energy mode
+
+Keep it compact and easy to use.
+
+## Add preference summary to Today screen
+
+On the Today screen, add a small, subtle preference summary near the challenge card or insight card.
+
+Examples:
+
+- “Tuned for: Learning · Health · Medium”
+- “Energy mode: Low Energy”
+- “Balanced daily quests”
+
+Keep it small and non-intrusive.
+
+## Data persistence
+
+Persist preferences in localStorage.
+
+Create a type like:
+
+```ts
+type QuestPreferences = {
+  preferredCategories: ChallengeCategory[];
+  blockedCategories: ChallengeCategory[];
+  preferredDifficulty: 'Any' | 'Easy' | 'Medium' | 'Hard';
+  energyMode: 'Low Energy' | 'Balanced' | 'High Energy';
+};

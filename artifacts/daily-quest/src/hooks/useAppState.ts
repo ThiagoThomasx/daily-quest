@@ -1,11 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
-import { AppState, ChallengeStatus, DailyChallenge } from '../types';
+import { AppState, ChallengeStatus, QuestPreferences } from '../types';
 import { challenges } from '../data/challenges';
 import { getTodayString } from '../utils/date';
 import { calculateStreak } from '../utils/streak';
 import { playSound, triggerHaptic } from '../utils/audio';
+import { selectChallengeByPreferences } from '../utils/questSelector';
 
 const STORAGE_KEY = 'daily-quest-state';
+
+export const defaultPreferences: QuestPreferences = {
+  preferredCategories: [],
+  blockedCategories: [],
+  preferredDifficulty: 'Any',
+  energyMode: 'Balanced',
+};
 
 const defaultState: AppState = {
   totalXP: 0,
@@ -15,21 +23,26 @@ const defaultState: AppState = {
   completedDates: [],
   history: [],
   today: null,
-  settings: {
-    sound: true,
-    haptic: true
-  }
+  settings: { sound: true, haptic: true },
+  preferences: defaultPreferences,
 };
+
+function mergeWithDefaults(raw: Partial<AppState>): AppState {
+  return {
+    ...defaultState,
+    ...raw,
+    settings: { ...defaultState.settings, ...(raw.settings ?? {}) },
+    preferences: { ...defaultPreferences, ...(raw.preferences ?? {}) },
+  };
+}
 
 export function useAppState() {
   const [state, setState] = useState<AppState>(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        return JSON.parse(stored);
-      }
-    } catch (e) {
-      console.error('Failed to parse stored state', e);
+      if (stored) return mergeWithDefaults(JSON.parse(stored));
+    } catch {
+      // corrupted — start fresh
     }
     return defaultState;
   });
@@ -38,64 +51,57 @@ export function useAppState() {
     setState(newState);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-    } catch (e) {
-      console.error('Failed to save state', e);
+    } catch {
+      // storage full or unavailable — no-op
     }
   }, []);
 
-  const getRandomChallenge = useCallback((excludeIds: string[]) => {
-    const available = challenges.filter(c => !excludeIds.includes(c.id));
-    if (available.length === 0) {
-      // If all used, pick from all
-      return challenges[Math.floor(Math.random() * challenges.length)];
-    }
-    return available[Math.floor(Math.random() * available.length)];
-  }, []);
+  const pickChallenge = useCallback(
+    (excludeIds: string[], prefs: QuestPreferences) =>
+      selectChallengeByPreferences(prefs, excludeIds, challenges),
+    [],
+  );
 
-  // Initialize or update today's state
+  // On mount / day change — initialise or refresh today's challenge
   useEffect(() => {
     const todayStr = getTodayString();
     let updated = false;
-    let newState = { ...state };
+    const newState = { ...state };
 
-    // Update streak based on last active date
+    // Streak maintenance
     const newStreak = calculateStreak(newState.currentStreak, newState.lastActiveDate, todayStr);
     if (newStreak !== newState.currentStreak) {
       newState.currentStreak = newStreak;
       updated = true;
     }
 
-    // Update last active date
     if (newState.lastActiveDate !== todayStr) {
       newState.lastActiveDate = todayStr;
       updated = true;
     }
 
-    // Check if we need a new challenge for today
+    // New day — generate a fresh challenge
     if (!newState.today || newState.today.dateGenerated !== todayStr) {
       if (newState.today && newState.today.status === 'active') {
-        // Mark yesterday's uncompleted challenge as skipped
-        newState.history = [
-          { ...newState.today, status: 'skipped', challenge: challenges.find(c => c.id === newState.today!.challengeId)! },
-          ...newState.history
-        ];
+        // Yesterday's uncompleted quest → mark skipped in history
+        const missedChallenge = challenges.find(c => c.id === newState.today!.challengeId);
+        if (missedChallenge) {
+          newState.history = [
+            { ...newState.today, status: 'skipped', challenge: missedChallenge },
+            ...newState.history,
+          ];
+        }
       }
 
       const recentIds = newState.history.slice(0, 7).map(h => h.challengeId);
-      const newChallenge = getRandomChallenge(recentIds);
-      
-      newState.today = {
-        challengeId: newChallenge.id,
-        status: 'active',
-        dateGenerated: todayStr
-      };
+      const next = pickChallenge(recentIds, newState.preferences);
+      newState.today = { challengeId: next.id, status: 'active', dateGenerated: todayStr };
       updated = true;
     }
 
-    if (updated) {
-      saveState(newState);
-    }
-  }, [state.lastActiveDate, state.today, saveState, getRandomChallenge]);
+    if (updated) saveState(newState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.lastActiveDate, state.today?.dateGenerated, saveState, pickChallenge]);
 
   const completeQuest = useCallback(() => {
     if (!state.today || state.today.status !== 'active') return;
@@ -104,26 +110,22 @@ export function useAppState() {
     if (state.settings.haptic) triggerHaptic('complete');
 
     const todayStr = getTodayString();
-    const challenge = challenges.find(c => c.id === state.today!.challengeId)!;
-    
+    const challenge = challenges.find(c => c.id === state.today!.challengeId);
+    if (!challenge) return;
+
     const newStreak = state.currentStreak + 1;
-    const bestStreak = Math.max(state.bestStreak, newStreak);
-    
-    const completedChallenge = {
-      ...state.today,
-      status: 'completed' as ChallengeStatus,
-      dateCompleted: todayStr,
-      challenge
-    };
 
     saveState({
       ...state,
       totalXP: state.totalXP + challenge.xp,
       currentStreak: newStreak,
-      bestStreak: bestStreak,
+      bestStreak: Math.max(state.bestStreak, newStreak),
       completedDates: [...new Set([...state.completedDates, todayStr])],
-      history: [completedChallenge, ...state.history],
-      today: { ...state.today, status: 'completed', dateCompleted: todayStr }
+      history: [
+        { ...state.today, status: 'completed' as ChallengeStatus, dateCompleted: todayStr, challenge },
+        ...state.history,
+      ],
+      today: { ...state.today, status: 'completed', dateCompleted: todayStr },
     });
   }, [state, saveState]);
 
@@ -133,50 +135,54 @@ export function useAppState() {
     if (state.settings.sound) playSound('skip');
     if (state.settings.haptic) triggerHaptic('skip');
 
-    const challenge = challenges.find(c => c.id === state.today!.challengeId)!;
-    const skippedChallenge = {
-      ...state.today,
-      status: 'skipped' as ChallengeStatus,
-      challenge
-    };
+    const challenge = challenges.find(c => c.id === state.today!.challengeId);
+    if (!challenge) return;
 
+    // Exclude recent IDs + the current one so we never re-serve it immediately
     const recentIds = state.history.slice(0, 7).map(h => h.challengeId);
-    const newChallenge = getRandomChallenge([...recentIds, challenge.id]);
-    
+    const excludeIds = [...new Set([...recentIds, challenge.id])];
+    const next = pickChallenge(excludeIds, state.preferences);
+
     saveState({
       ...state,
-      history: [skippedChallenge, ...state.history],
-      today: {
-        challengeId: newChallenge.id,
-        status: 'active',
-        dateGenerated: getTodayString()
-      }
+      history: [
+        { ...state.today, status: 'skipped' as ChallengeStatus, challenge },
+        ...state.history,
+      ],
+      today: { challengeId: next.id, status: 'active', dateGenerated: getTodayString() },
     });
-  }, [state, saveState, getRandomChallenge]);
+  }, [state, saveState, pickChallenge]);
 
-  const updateSettings = useCallback((settings: AppState['settings']) => {
-    saveState({ ...state, settings });
-  }, [state, saveState]);
+  const updateSettings = useCallback(
+    (settings: AppState['settings']) => saveState({ ...state, settings }),
+    [state, saveState],
+  );
 
-  const importState = useCallback((importedState: AppState) => {
-    // Basic validation
-    if (typeof importedState.totalXP === 'number' && Array.isArray(importedState.history)) {
-      saveState(importedState);
-      return true;
-    }
-    return false;
-  }, [saveState]);
+  const updatePreferences = useCallback(
+    (preferences: QuestPreferences) => saveState({ ...state, preferences }),
+    [state, saveState],
+  );
 
-  const resetState = useCallback(() => {
-    saveState(defaultState);
-  }, [saveState]);
+  const importState = useCallback(
+    (imported: Partial<AppState>): boolean => {
+      if (typeof imported.totalXP === 'number' && Array.isArray(imported.history)) {
+        saveState(mergeWithDefaults(imported));
+        return true;
+      }
+      return false;
+    },
+    [saveState],
+  );
+
+  const resetState = useCallback(() => saveState(defaultState), [saveState]);
 
   return {
     state,
     completeQuest,
     skipQuest,
     updateSettings,
+    updatePreferences,
     importState,
-    resetState
+    resetState,
   };
 }

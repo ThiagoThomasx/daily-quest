@@ -9,6 +9,7 @@ import { useAppState } from '../hooks/useAppState';
 import { getLevel, getLevelProgress, getXPForNextLevel } from '../utils/xp';
 import { challenges } from '../data/challenges';
 import { formatDate, getTodayString, getPastDates } from '../utils/date';
+import { getPreferenceSummary } from '../utils/questSelector';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -239,6 +240,20 @@ function InsightCard({ state }: { state: AppState }) {
   );
 }
 
+function PreferenceSummary({ state }: { state: AppState }) {
+  const summary = getPreferenceSummary(state.preferences);
+  if (!summary) return null;
+  return (
+    <div
+      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/30 border border-border/50"
+      data-testid="preference-summary"
+    >
+      <span className="text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider shrink-0">Tuned for</span>
+      <span className="text-[11px] text-muted-foreground font-medium truncate">{summary}</span>
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function TodayPage() {
@@ -284,12 +299,13 @@ export default function TodayPage() {
     skipQuest();
   };
 
-  // Sidebar content (weekly strip + stats + insight)
+  // Sidebar content (weekly strip + stats + insight + preference summary)
   const sideContent = (
     <div className="flex flex-col gap-3">
       <WeeklyStrip state={state} />
       <QuickStats state={state} />
       <InsightCard state={state} />
+      <PreferenceSummary state={state} />
     </div>
   );
 

@@ -1,6 +1,8 @@
 export type Category = 'Productivity' | 'Learning' | 'Health' | 'Creativity' | 'Social' | 'Career' | 'Reflection' | 'Fun';
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 export type ChallengeStatus = 'active' | 'completed' | 'skipped';
+export type PreferredDifficulty = 'Any' | 'Easy' | 'Medium' | 'Hard';
+export type EnergyMode = 'Low Energy' | 'Balanced' | 'High Energy';
 
 export interface Challenge {
   id: string;
@@ -19,6 +21,13 @@ export interface DailyChallenge {
   dateCompleted?: string;
 }
 
+export interface QuestPreferences {
+  preferredCategories: Category[];
+  blockedCategories: Category[];
+  preferredDifficulty: PreferredDifficulty;
+  energyMode: EnergyMode;
+}
+
 export interface AppState {
   totalXP: number;
   currentStreak: number;
@@ -31,4 +40,5 @@ export interface AppState {
     sound: boolean;
     haptic: boolean;
   };
+  preferences: QuestPreferences;
 }
