@@ -1,0 +1,392 @@
+Build a mobile-first app called **Daily Quest**.
+
+The goal is to create a simple, polished, and useful daily challenge app that feels like a real mobile app, not just a responsive website.
+
+This project is an experiment to evaluate Replit as a tool for building lightweight mobile-first apps. Prioritize speed, usability, and a strong mobile experience.
+
+## Product concept
+
+Daily Quest gives the user one random challenge per day.
+
+The app should help users build consistency through small daily actions across different life areas:
+
+* Productivity
+* Learning
+* Health
+* Creativity
+* Social
+* Career
+* Reflection
+* Fun
+
+The core loop is:
+
+Open app → receive daily challenge → complete or skip → earn XP → maintain streak → see progress history.
+
+## Recommended stack
+
+Use a Replit-friendly stack:
+
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* LocalStorage for persistence
+* Lucide React for icons if available
+* No backend
+* No authentication
+* Mobile-first design
+* PWA-friendly setup if simple
+
+## Core MVP requirements
+
+### 1. Home screen
+
+Create a mobile-first home screen showing:
+
+* App name: Daily Quest
+* Today’s date
+* Current level
+* Total XP
+* Current streak
+* Best streak
+* Today’s challenge card
+* Primary button: “Complete Quest”
+* Secondary button: “Skip / Reroll”
+
+The screen should feel compact and useful on a phone.
+
+Avoid excessive scrolling.
+
+### 2. Daily challenge logic
+
+The app should generate one challenge per day.
+
+Rules:
+
+* If the user opens the app for the first time today, generate a new challenge.
+* If a challenge already exists for today, keep the same challenge.
+* The user can complete the challenge once.
+* The user can skip/reroll the challenge, but skipped challenges should be saved in history as skipped.
+* Completing a challenge gives XP.
+* Completing at least one challenge in a day increases the streak.
+* Missing a day should reset the active streak.
+* Track best streak.
+
+### 3. Challenge structure
+
+Each challenge should have:
+
+* ID
+* Title
+* Description
+* Category
+* Difficulty
+* XP value
+* Estimated time
+* Status:
+
+  * Active
+  * Completed
+  * Skipped
+* Date generated
+* Date completed, if completed
+
+Difficulties:
+
+* Easy: 10 XP
+* Medium: 25 XP
+* Hard: 50 XP
+
+Categories:
+
+* Productivity
+* Learning
+* Health
+* Creativity
+* Social
+* Career
+* Reflection
+* Fun
+
+### 4. Challenge database
+
+Create at least 50 predefined challenges.
+
+Examples:
+
+Productivity:
+
+* Clean your desk for 5 minutes.
+* Plan your top 3 priorities for tomorrow.
+* Delete or archive 20 unnecessary files/messages.
+
+Learning:
+
+* Learn 5 new words in another language.
+* Watch a 10-minute educational video and write one takeaway.
+* Read 5 pages of a book or article.
+
+Health:
+
+* Walk for 10 minutes.
+* Drink a full glass of water now.
+* Stretch your body for 5 minutes.
+
+Creativity:
+
+* Write one paragraph about an idea.
+* Draw something simple for 5 minutes.
+* Record a voice note with a random thought.
+
+Social:
+
+* Send a kind message to someone.
+* Check in with a friend.
+* Thank someone for something specific.
+
+Career:
+
+* Improve one sentence in your LinkedIn profile.
+* Save one useful job or learning resource.
+* Write down one professional skill you want to improve.
+
+Reflection:
+
+* Write one thing you did well today.
+* Write one thing you want to improve tomorrow.
+* Rate your energy from 1 to 5 and write why.
+
+Fun:
+
+* Listen to one song intentionally.
+* Watch a short scene from a movie you like.
+* Do something small only because it is enjoyable.
+
+Make the challenge list feel varied and practical.
+
+### 5. Level system
+
+Create a simple level system based on XP:
+
+* Level 1: 0 XP
+* Level 2: 100 XP
+* Level 3: 250 XP
+* Level 4: 500 XP
+* Level 5: 900 XP
+* Level 6: 1400 XP
+* Level 7: 2000 XP
+* Level 8: 2800 XP
+* Level 9: 3700 XP
+* Level 10: 5000 XP
+
+Show:
+
+* Current level
+* XP progress to next level
+* Progress bar
+
+### 6. History screen
+
+Create a history screen showing past challenges.
+
+Each history item should show:
+
+* Challenge title
+* Category
+* Difficulty
+* XP
+* Date
+* Status: completed or skipped
+
+Add filters:
+
+* All
+* Completed
+* Skipped
+* By category
+
+### 7. Stats screen
+
+Create a stats screen showing:
+
+* Total completed quests
+* Total skipped quests
+* Completion rate
+* Total XP
+* Current streak
+* Best streak
+* Most completed category
+* Hard quests completed
+* Last 7 days activity
+
+Keep the stats visual and simple.
+
+### 8. Challenge library screen
+
+Create a screen where users can browse all available challenges.
+
+Allow filtering by:
+
+* Category
+* Difficulty
+
+The library is read-only for MVP.
+
+### 9. Settings screen
+
+Create settings with:
+
+* Export data as JSON
+* Import data from JSON
+* Reset all progress with confirmation
+* Toggle sound effects if easy to implement
+* Toggle haptic feedback if supported by browser
+* App information
+
+Explain that data is stored locally in the browser for this MVP.
+
+## Navigation
+
+Use bottom navigation for mobile.
+
+Tabs:
+
+* Today
+* History
+* Stats
+* Library
+* Settings
+
+The app should be optimized for phone usage.
+
+## UX principles
+
+This should feel like a mobile habit/game app.
+
+Prioritize:
+
+* Large tap targets
+* Compact cards
+* Clear hierarchy
+* Smooth transitions
+* Delightful microcopy
+* Empty states
+* Fast interactions
+* No unnecessary complexity
+* No long forms
+* No account creation
+
+The user should understand the app within 10 seconds.
+
+## Visual style
+
+Use a modern, polished dark mode by default.
+
+Visual direction:
+
+* Dark background
+* Blue/purple accent colors
+* Rounded cards
+* Subtle gradients
+* Progress bars
+* Category badges
+* Difficulty badges
+* Small celebratory feedback when a quest is completed
+
+The style should feel like a mix of a productivity app and a lightweight RPG system.
+
+## PWA / mobile-app preparation
+
+Make the app PWA-friendly if possible.
+
+Add:
+
+* App manifest
+* App name: Daily Quest
+* Theme color
+* Mobile viewport settings
+* Apple mobile web app metadata if simple
+* Placeholder app icons if needed
+
+Do not overcomplicate service workers unless it is safe and simple.
+
+The goal is that the user can open the deployed app on a phone and add it to the home screen.
+
+## Data persistence
+
+Use localStorage.
+
+Persist:
+
+* Current daily challenge
+* Challenge history
+* XP
+* Streak
+* Best streak
+* Completed dates
+* Settings
+
+Add defensive handling so corrupted or missing localStorage data does not crash the app.
+
+## Technical requirements
+
+* Use TypeScript types.
+* Keep components reusable.
+* Separate challenge data from UI components.
+* Create utility functions for XP, level, streak, and dates.
+* Validate all state transitions.
+* Make sure refreshing the page does not lose progress.
+* Make sure the app builds successfully.
+
+## Suggested folder structure
+
+Use a clean structure like:
+
+src/
+
+* components/
+* data/
+* hooks/
+* pages/
+* types/
+* utils/
+* App.tsx
+* main.tsx
+
+## First-time user experience
+
+When the user opens the app for the first time:
+
+* Show a welcoming empty state.
+* Immediately generate today’s first challenge.
+* Explain the core loop in one short sentence.
+* Avoid onboarding screens unless extremely simple.
+
+## Important quality bar
+
+Do not make this look like a generic website.
+
+It should feel like a small mobile app.
+
+Focus on:
+
+* Today screen quality
+* Strong challenge card design
+* Clear progress feedback
+* Useful stats
+* Reliable persistence
+* Simple PWA preparation
+
+## Final deliverable
+
+After implementation, provide:
+
+1. What was built.
+2. How to run it.
+3. How to test it on mobile.
+4. How to add it to the phone home screen.
+5. How to deploy/publish it from Replit.
+6. Suggested next improvements.
+
+Before finishing, run the project, check for errors, and fix any TypeScript/build/runtime issues.
