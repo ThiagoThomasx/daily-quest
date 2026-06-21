@@ -1,0 +1,87 @@
+Daily Quest is working well and the personalization sprint has been tested successfully.
+
+For the final sprint today, do NOT add custom user-created quests.
+
+The core concept of the app should remain:
+
+“The user does not choose the quest. The app gives a random daily quest. The user only decides whether to do it or skip/reroll.”
+
+The goal of this sprint is to make the app more usable by increasing quest variety and reducing repetition.
+
+## Sprint name
+
+Quest Variety + Anti-Repetition
+
+## Main goals
+
+1. Expand the predefined challenge database significantly.
+2. Improve the random quest generator to avoid repetition.
+3. Improve the Library screen so it handles a larger quest pool well.
+4. Preserve the simplicity and randomness of the app.
+5. Do not add custom quests, user-created quests, complex onboarding, AI, backend, authentication, or payments.
+
+---
+
+## 1. Expand the challenge database
+
+Expand the predefined challenge list to at least 160 quests total.
+
+Target:
+
+- 8 categories
+- At least 20 quests per category
+
+Categories:
+
+- Productivity
+- Learning
+- Health
+- Creativity
+- Social
+- Career
+- Reflection
+- Fun
+
+Each category should include a balanced mix of:
+
+- Easy quests
+- Medium quests
+- Hard quests
+- quick 2–5 minute actions
+- 10–15 minute actions
+- deeper 20–30 minute actions
+
+Keep all quests practical, clear, and realistic.
+
+Avoid vague challenges like “be better today”.
+
+Each quest should have:
+
+- id
+- title
+- description
+- category
+- difficulty
+- xp value
+- estimated time
+
+Difficulty XP values should remain:
+
+- Easy: 10 XP
+- Medium: 25 XP
+- Hard: 50 XP
+
+Make quest IDs stable and readable.
+
+Example format:
+
+```ts
+{
+  id: "learning-watch-educational-video",
+  title: "Watch a 10-minute educational video",
+  description: "Watch a video on a topic you know little about and write down one takeaway.",
+  category: "Learning",
+  difficulty: "Medium",
+  xp: 25,
+  estimatedTime: "10 min"
+}
