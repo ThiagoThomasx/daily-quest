@@ -1,0 +1,184 @@
+Continue improving Daily Quest.
+
+The app is working, but the Today screen still feels too empty and centered, especially on larger screens. Improve it so it feels more like a real mobile-first app while also using desktop space better.
+
+Focus only on the Today screen and related supporting components. Do not add backend, authentication, or complex new features.
+
+## Main goal
+
+Create a better Today screen experience with:
+
+1. Better mobile app feeling
+2. Less empty space
+3. Stronger progression feedback
+4. Better completed state
+5. Weekly activity visibility
+6. Improved desktop layout while preserving mobile-first UX
+
+## Today screen layout improvements
+
+### Mobile layout
+
+On mobile, keep the layout compact and vertical:
+
+- Header with date, app name, streak chip
+- Level + XP progress
+- Main quest card
+- Weekly progress strip
+- Quick stats cards
+- Small motivational message
+
+Avoid excessive scrolling.
+
+### Desktop layout
+
+On desktop/tablet, use a two-column layout:
+
+Left column:
+- Date
+- App title
+- Level + XP progress
+- Main quest card
+
+Right column:
+- Weekly progress strip
+- Quick stats
+- Motivational message
+- Small “Next unlock” or “Progress insight” card
+
+The app should no longer look like a single card floating in empty space.
+
+## Add Weekly Progress Strip
+
+Create a compact 7-day activity strip.
+
+It should show the last 7 days or the current week.
+
+Each day should have a small circular indicator with states:
+
+- Completed
+- Skipped
+- Missed
+- Today
+- Future / empty
+
+Use simple visual differences:
+- completed: filled/accent
+- skipped: muted
+- missed: subtle danger/low opacity
+- today: outlined/glow
+- empty: neutral
+
+Below or above the strip, show a small label:
+
+“Your last 7 days”
+
+Make sure this uses existing challenge history and completed dates from localStorage.
+
+## Add Quick Stats Row
+
+Add 3 compact stat cards:
+
+1. Completed quests
+2. Current streak
+3. XP this week
+
+On mobile, show them as 3 small cards in a row if possible. If too tight, use a responsive grid.
+
+On desktop, show them in the right column.
+
+## Improve completed state
+
+When today’s quest is completed, the main quest card should change to a strong completed state.
+
+Show:
+
+- “Quest Complete”
+- Completed quest title
+- XP earned
+- Current streak
+- A short message: “Come back tomorrow for your next quest.”
+- Button: “View History”
+- Button: “View Stats”
+
+Do not show the “Complete Quest” button after completion.
+
+Do not allow double completion.
+
+## Improve active quest state
+
+For the active challenge card:
+
+- Improve hierarchy of category/difficulty/time badges
+- Make XP reward more prominent
+- Improve CTA spacing
+- Make Skip/Reroll less visually weak but still secondary
+- Add a short encouraging line under the quest description
+
+Example microcopy:
+“Small action. Real momentum.”
+
+## Add motivational insight card
+
+Add a small card that changes based on state:
+
+If no quest completed today:
+“Complete today’s quest to keep your momentum alive.”
+
+If quest completed today:
+“You showed up today. That’s the habit.”
+
+If streak is 3 or more:
+“You’re building consistency. Keep the chain alive.”
+
+If many skipped challenges:
+“Try choosing easier quests when energy is low.”
+
+Keep this simple and deterministic. Do not use AI or external APIs.
+
+## Reliability
+
+Make sure these calculations work correctly:
+
+- XP this week
+- completed quests count
+- current streak
+- last 7 days activity
+- completed state after refresh
+- skipped challenge appears in history
+- completed challenge cannot be completed twice
+- localStorage missing/corrupted does not crash the app
+
+## Design direction
+
+Keep the current dark mode and purple/blue accent.
+
+Improve:
+
+- spacing
+- card hierarchy
+- responsiveness
+- visual polish
+- subtle gradients
+- app-like density
+
+Do not make the UI cluttered.
+
+## Technical requirements
+
+- Use TypeScript properly.
+- Reuse existing utility functions where possible.
+- Add new utilities only if needed.
+- Keep components organized.
+- Avoid large duplicated logic.
+- Run build and fix all TypeScript/runtime errors.
+
+## Final response
+
+After implementation, summarize:
+
+1. What changed on the Today screen.
+2. How the weekly progress strip works.
+3. How the completed state works.
+4. How to test the new behavior.
+5. Any known limitations.

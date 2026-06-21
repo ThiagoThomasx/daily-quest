@@ -57,7 +57,7 @@ function App() {
   return (
     <TooltipProvider>
       <div className="min-h-[100dvh] w-full bg-background text-foreground flex justify-center">
-        <div className="w-full max-w-[428px] relative pb-20">
+        <div className="w-full max-w-[428px] lg:max-w-4xl relative pb-24">
           <Switch>
             <Route path="/" component={TodayPage} />
             <Route path="/history" component={HistoryPage} />
